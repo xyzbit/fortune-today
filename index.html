@@ -1,20 +1,25 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>今日运势</title>
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎯</text></svg>">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="src/styles/main.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/lunar-javascript/lunar.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/cnchar/cnchar.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/cnchar-draw/cnchar.draw.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/cnchar-radical/cnchar.radical.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 </head>
-<body class="bg-gray-100 min-h-screen">
+
+<body class="bg-gray-50 min-h-screen">
     <div class="container mx-auto px-4 py-8">
         <h1 class="text-3xl font-bold text-center mb-8">今日运势</h1>
-        
+
         <div class="bg-white rounded-lg shadow-lg p-6 max-w-md mx-auto">
             <form id="userInfoForm" class="space-y-4">
                 <div>
@@ -31,6 +36,13 @@
                     <input type="date" id="birthdate" name="birthdate" required
                         class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                 </div>
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="birthtime">
+                        出生时刻
+                    </label>
+                    <input type="time" id="birthtime" name="birthtime"
+                        class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
                 <button type="submit"
                     class="w-full bg-blue-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-200">
                     查看运势
@@ -38,85 +50,146 @@
             </form>
         </div>
 
-        <div id="fortuneResult" class="mt-8 bg-white rounded-lg shadow-lg p-6 max-w-md mx-auto hidden">
-            <div class="text-center">
+        <div id="fortuneResult" class="mt-8 bg-white rounded-lg shadow-lg p-8 max-w-4xl mx-auto hidden">
+            <div class="text-center mb-12">
                 <h2 class="text-2xl font-bold mb-4">运势结果</h2>
-                <div id="fortuneLevel" class="text-4xl font-bold mb-4 text-red-500">大吉</div>
-                
-                <div class="mb-6 text-left">
-                    <h3 class="text-lg font-semibold text-gray-700 mb-2">八字</h3>
-                    <div id="baziInfo" class="grid grid-cols-4 gap-4 text-center">
-                        <div>
-                            <div class="text-sm text-gray-500">年柱</div>
-                            <div id="yearPillar" class="font-medium"></div>
-                        </div>
-                        <div>
-                            <div class="text-sm text-gray-500">月柱</div>
-                            <div id="monthPillar" class="font-medium"></div>
-                        </div>
-                        <div>
-                            <div class="text-sm text-gray-500">日柱</div>
-                            <div id="dayPillar" class="font-medium"></div>
-                        </div>
-                        <div>
-                            <div class="text-sm text-gray-500">时柱</div>
-                            <div id="timePillar" class="font-medium"></div>
-                        </div>
+                <div id="fortuneLevel" class="text-6xl font-bold mb-4">大吉</div>
+                <div class="inline-flex items-center justify-center">
+                    <span class="text-gray-500 mr-3">运势指数</span>
+                    <div class="flex space-x-2">
+                        <div class="w-4 h-4 rounded-full bg-gray-200" id="fortune-dot-1"></div>
+                        <div class="w-4 h-4 rounded-full bg-gray-200" id="fortune-dot-2"></div>
+                        <div class="w-4 h-4 rounded-full bg-gray-200" id="fortune-dot-3"></div>
+                        <div class="w-4 h-4 rounded-full bg-gray-200" id="fortune-dot-4"></div>
+                        <div class="w-4 h-4 rounded-full bg-gray-200" id="fortune-dot-5"></div>
                     </div>
                 </div>
+            </div>
 
-                <div class="mb-6 text-left">
-                    <h3 class="text-lg font-semibold text-gray-700 mb-2">五行分析</h3>
-                    <div class="space-y-2">
-                        <div class="flex justify-between">
-                            <span class="text-gray-500">当日五行：</span>
-                            <span id="dayElement" class="font-medium"></span>
+            <!-- 幸运物品展示 -->
+            <div class="mb-8 bg-gray-50 rounded-lg p-6">
+                <h3 class="text-lg font-semibold text-gray-700 mb-4 text-center">今日幸运物品</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                    <div class="text-center">
+                        <div
+                            class="bg-white rounded-full w-16 h-16 mx-auto mb-3 flex items-center justify-center shadow-sm">
+                            <span id="luckyColor" class="text-2xl">🎨</span>
                         </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-500">姓名五行：</span>
-                            <span id="personElement" class="font-medium"></span>
+                        <div class="text-sm text-gray-500">幸运色</div>
+                        <div id="luckyColorText" class="font-medium mt-1">翠绿色</div>
+                    </div>
+                    <div class="text-center">
+                        <div
+                            class="bg-white rounded-full w-16 h-16 mx-auto mb-3 flex items-center justify-center shadow-sm">
+                            <span id="luckyNumber" class="text-2xl">🔢</span>
                         </div>
-                        <div class="mt-2">
-                            <div class="text-sm text-gray-500 mb-1">五行分布：</div>
-                            <div id="elementDistribution" class="grid grid-cols-5 gap-2 text-center text-sm">
-                                <div>
-                                    <div class="font-medium text-green-600">木</div>
-                                    <div id="woodCount" class="text-gray-600">0</div>
-                                </div>
-                                <div>
-                                    <div class="font-medium text-red-600">火</div>
-                                    <div id="fireCount" class="text-gray-600">0</div>
-                                </div>
-                                <div>
-                                    <div class="font-medium text-yellow-600">土</div>
-                                    <div id="earthCount" class="text-gray-600">0</div>
-                                </div>
-                                <div>
-                                    <div class="font-medium text-gray-600">金</div>
-                                    <div id="metalCount" class="text-gray-600">0</div>
-                                </div>
-                                <div>
-                                    <div class="font-medium text-blue-600">水</div>
-                                    <div id="waterCount" class="text-gray-600">0</div>
-                                </div>
+                        <div class="text-sm text-gray-500">幸运数字</div>
+                        <div id="luckyNumberText" class="font-medium mt-1">8</div>
+                    </div>
+                    <div class="text-center">
+                        <div
+                            class="bg-white rounded-full w-16 h-16 mx-auto mb-3 flex items-center justify-center shadow-sm">
+                            <span id="luckyItem" class="text-2xl">🎁</span>
+                        </div>
+                        <div class="text-sm text-gray-500">幸运物品</div>
+                        <div id="luckyItemText" class="font-medium mt-1">玉石</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- 左侧：八字和五行分析 -->
+                <div class="space-y-8">
+                    <div class="bg-gray-50 rounded-lg p-6">
+                        <h3 class="text-lg font-semibold text-gray-700 mb-4">八字</h3>
+                        <div class="grid grid-cols-4 gap-6">
+                            <div class="text-center">
+                                <div class="text-sm text-gray-500 mb-2">年柱</div>
+                                <div id="yearPillar" class="font-medium text-lg"></div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-sm text-gray-500 mb-2">月柱</div>
+                                <div id="monthPillar" class="font-medium text-lg"></div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-sm text-gray-500 mb-2">日柱</div>
+                                <div id="dayPillar" class="font-medium text-lg"></div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-sm text-gray-500 mb-2">时柱</div>
+                                <div id="timePillar" class="font-medium text-lg"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-lg p-6">
+                        <h3 class="text-lg font-semibold text-gray-700 mb-4">五行分析</h3>
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-500">当日五行</span>
+                                <span id="dayElement" class="font-medium"></span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-500">姓名五行</span>
+                                <span id="personElement" class="font-medium"></span>
+                            </div>
+                            <div>
+                                <div class="text-sm text-gray-500 mb-3">五行分布</div>
+                                <canvas id="elementChart" class="w-full" height="250"></canvas>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="space-y-4">
-                    <div>
-                        <h3 class="text-lg font-semibold text-gray-700">宜</h3>
-                        <p id="goodActivities" class="text-gray-600"></p>
-                    </div>
-                    <div>
-                        <h3 class="text-lg font-semibold text-gray-700">忌</h3>
-                        <p id="badActivities" class="text-gray-600"></p>
+                <!-- 右侧：宜忌事项 -->
+                <div class="bg-gray-50 rounded-lg p-6 h-full">
+                    <div class="space-y-6">
+                        <!-- 运势解读 -->
+                        <div class="mb-6">
+                            <h3 class="text-lg font-semibold text-gray-700 mb-3">运势解读</h3>
+                            <div class="bg-white rounded-lg p-4 shadow-sm">
+                                <div class="flex items-center mb-3">
+                                    <span class="text-gray-500 mr-2">五行关系：</span>
+                                    <span id="elementRelation" class="font-medium"></span>
+                                </div>
+                                <div class="flex items-center">
+                                    <span class="text-gray-500 mr-2">吉凶指数：</span>
+                                    <div class="flex space-x-1">
+                                        <div id="fortune-indicator" class="text-lg font-medium"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 宜忌事项 -->
+                        <div>
+                            <div class="flex items-center mb-4">
+                                <h3 class="text-lg font-semibold text-green-600">宜</h3>
+                                <div class="flex-1 h-px bg-green-100 ml-3"></div>
+                            </div>
+                            <div id="goodActivities" class="flex flex-wrap gap-2 mb-6"></div>
+                        </div>
+                        <div>
+                            <div class="flex items-center mb-4">
+                                <h3 class="text-lg font-semibold text-red-600">忌</h3>
+                                <div class="flex-1 h-px bg-red-100 ml-3"></div>
+                            </div>
+                            <div id="badActivities" class="flex flex-wrap gap-2 mb-6"></div>
+                        </div>
+
+                        <!-- 今日建议 -->
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-700 mb-3">今日建议</h3>
+                            <div class="bg-white rounded-lg p-4 shadow-sm">
+                                <div id="dailyAdvice" class="text-gray-600"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <script src="src/js/fortune.js" type="module"></script>
+    <script src="src/js/fortune.js"></script>
 </body>
-</html> 
+
+</html>

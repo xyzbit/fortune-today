@@ -1,24 +1,159 @@
 /* 自定义样式 */
-.fortune-level-大吉 { color: #ef4444; }
-.fortune-level-吉 { color: #f97316; }
-.fortune-level-平 { color: #a3a3a3; }
-.fortune-level-凶 { color: #6b7280; }
-.fortune-level-大凶 { color: #1f2937; }
+.fortune-level-大吉 {
+    color: #22c55e;
+    text-shadow: 0 0 20px rgba(34, 197, 94, 0.2);
+}
+
+.fortune-level-吉 {
+    color: #3b82f6;
+    text-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
+}
+
+.fortune-level-平 {
+    color: #eab308;
+    text-shadow: 0 0 20px rgba(234, 179, 8, 0.2);
+}
+
+.fortune-level-凶 {
+    color: #f97316;
+    text-shadow: 0 0 20px rgba(249, 115, 22, 0.2);
+}
+
+.fortune-level-大凶 {
+    color: #ef4444;
+    text-shadow: 0 0 20px rgba(239, 68, 68, 0.2);
+}
 
 /* 动画效果 */
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .fade-in {
-    animation: fadeIn 0.5s ease-in;
+    animation: fadeIn 0.6s ease-out;
 }
 
-/* 响应式调整 */
-@media (max-width: 640px) {
-    .container {
-        padding-left: 1rem;
-        padding-right: 1rem;
+/* 脉冲动画 */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
     }
-} 
+
+    50% {
+        transform: scale(1.2);
+        opacity: 0.8;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.animate-pulse {
+    animation: pulse 2s infinite;
+}
+
+/* 卡片样式 */
+.bg-gray-50 {
+    background-color: rgba(249, 250, 251, 0.8);
+    backdrop-filter: blur(8px);
+    transition: all 0.3s ease;
+}
+
+.bg-gray-50:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* 活动标签 */
+#goodActivities div,
+#badActivities div {
+    transition: all 0.2s ease;
+    background-color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+#goodActivities div:hover,
+#badActivities div:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* 图表容器 */
+#elementChart {
+    transition: all 0.3s ease;
+}
+
+#elementChart:hover {
+    transform: scale(1.02);
+}
+
+/* 幸运物品样式 */
+#luckyColor,
+#luckyNumber,
+#luckyItem {
+    font-size: 2rem;
+    transition: all 0.3s ease;
+}
+
+.bg-white.rounded-full {
+    transition: all 0.3s ease;
+}
+
+.bg-white.rounded-full:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+#luckyColorText,
+#luckyNumberText,
+#luckyItemText {
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+#luckyColorText:after,
+#luckyNumberText:after,
+#luckyItemText:after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: currentColor;
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+}
+
+.text-center:hover #luckyColorText:after,
+.text-center:hover #luckyNumberText:after,
+.text-center:hover #luckyItemText:after {
+
+    /* 响应式调整 */
+    @media (max-width: 640px) {
+        .container {
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+
+        #fortuneResult {
+            padding: 1.5rem;
+        }
+
+        .grid-cols-4 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
