@@ -1,0 +1,24 @@
+/* 自定义样式 */
+.fortune-level-大吉 { color: #ef4444; }
+.fortune-level-吉 { color: #f97316; }
+.fortune-level-平 { color: #a3a3a3; }
+.fortune-level-凶 { color: #6b7280; }
+.fortune-level-大凶 { color: #1f2937; }
+
+/* 动画效果 */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+/* 响应式调整 */
+@media (max-width: 640px) {
+    .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+} 

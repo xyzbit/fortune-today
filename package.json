@@ -1,0 +1,18 @@
+{
+  "name": "fortune-today",
+  "version": "1.0.0",
+  "description": "今日运势，输入部分信息你可以看到当天的运势和建议事项（全程 AI 开发）",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cnchar": "^3.2.6",
+    "cnchar-draw": "^3.2.6",
+    "cnchar-radical": "^3.2.6",
+    "lunar-javascript": "^1.7.0"
+  }
+}
